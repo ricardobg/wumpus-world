@@ -134,7 +134,7 @@ Frame Axioms
 Frame axioms characterize what has remained the same because of an action. For example: 
 
       Holding(x,s) & (a/=Release) = > Holding(x,Result(a,s)) 
-      NOT Holding(x,s) & ((a/=Grab)) | NOT(Present(x,s) & Portable(x)) = > NOT Holding(x,Result(a,s)) 
+      NOT Holding(x,s) & ((a/=Grab) | NOT(Present(x,s) & Portable(x))) = > NOT Holding(x,Result(a,s)) 
 
 Successor-State Axioms
 
@@ -165,7 +165,7 @@ More Definitions and Axioms
       (a=Turn(Left) & d=Mod(Orientation(p,s)+90,360)) OR 
       (Orientation(p,s)=d & NOT(a=Turn(Right) & a=Turn(Left)))] 
 
-      At(Wumpus.l1,s) & Adjacent(l1,l2) = > Smelly(l2) 
+      At(Wumpus,l1,s) & Adjacent(l1,l2) = > Smelly(l2) 
       At(Pit,l1,s) & Adjacent(l1,l2) = > Breezy(l2) 
 
 Model-Based and Diagnostic Reasoning

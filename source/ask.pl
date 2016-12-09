@@ -6,6 +6,8 @@ ask_KB(Action) :- make_action_query(Strategy,Action).
 
 make_action_query(Strategy,Action) :- act(strategy_reflex,Action),!.
 make_action_query(Strategy,Action) :- act(strategy_find_out,Action),!.
+make_action_query(Strategy,Action) :- act(strategy_aim_to_wumpus,Action),!.
+make_action_query(Strategy,Action) :- act(strategy_find_out_risky,Action),!.
 make_action_query(Strategy,Action) :- act(strategy_go_out,Action),!.
 
 
@@ -150,78 +152,242 @@ act(strategy_find_out,turnleft) :-	% I want to change completely
 	good(_),			% while I don't find it, I look for
 	is_short_goal(find_out_180_good_),!.	
 	
-	
+
+% Strategy to aim to the wumpus.
+% Only used when I am looking for gold
+% I have gold
+% The wumpus is alive
+% And I have an arrow
+
+%
+% First, when the Wumpus is at the same row (Y)
+% Try to look west or east (depending on Wumpus position)
+
+% Turn left if at the same Y, at a smaller X and looking south
+act(strategy_aim_to_wumpus, turnleft) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [WX, Y]),
+    X < WX,
+    agent_orientation(270),
+    is_short_goal(aim_to_wumpus_in_the_same_Y), !.
+
+
+% Turn right if at the same Y, at a smaller X and looking north
+act(strategy_aim_to_wumpus, turnright) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [WX, Y]),
+    X < WX,
+    agent_orientation(90),
+    is_short_goal(aim_to_wumpus_in_the_same_Y), !.
+
+% Turn right if at the same Y, at a smaller X and looking west
+act(strategy_aim_to_wumpus, turnright) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [WX, Y]),
+    X < WX,
+    agent_orientation(180),
+    is_short_goal(aim_to_wumpus_in_the_same_Y), !.
+
+% Turn right if at the same Y, at a bigger X and looking south
+act(strategy_aim_to_wumpus, turnright) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [WX, Y]),
+    X > WX,
+    agent_orientation(270),
+    is_short_goal(aim_to_wumpus_in_the_same_Y), !.
+
+
+% Turn left if at the same Y, at a bigger X and looking north
+act(strategy_aim_to_wumpus, turnleft) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [WX, Y]),
+    X > WX,
+    agent_orientation(90),
+    is_short_goal(aim_to_wumpus_in_the_same_Y), !.
+
+% Turn left if at the same Y, at a bigger X and looking east
+act(strategy_aim_to_wumpus, turnleft) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [WX, Y]),
+    X > WX,
+    agent_orientation(0),
+    is_short_goal(aim_to_wumpus_in_the_same_Y), !.
+
+%
+% Second, when the Wumpus is at the same column (X)
+% Try to look north or south (depending on Wumpus position)
+
+% Turn left if at the same X, at a smaller Y and looking east
+act(strategy_aim_to_wumpus, turnleft) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [X, WY]),
+    Y < WY,
+    agent_orientation(0),
+    is_short_goal(aim_to_wumpus_in_the_same_X), !.
+
+% Turn right if at the same X, at a smaller Y and looking west
+act(strategy_aim_to_wumpus, turnright) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [X, WY]),
+    Y < WY,
+    agent_orientation(180),
+    is_short_goal(aim_to_wumpus_in_the_same_X), !.
+
+% Turn right if at the same X, at a smaller Y and looking south
+act(strategy_aim_to_wumpus, turnright) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [X, WY]),
+    Y < WY,
+    agent_orientation(270),
+    is_short_goal(aim_to_wumpus_in_the_same_X), !.
+
+
+% Turn right if at the same X, at a bigger Y and looking east
+act(strategy_aim_to_wumpus, turnright) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [X, WY]),
+    Y > WY,
+    agent_orientation(0),
+    is_short_goal(aim_to_wumpus_in_the_same_X), !.
+
+% Turn left if at the same X, at a bigger Y and looking west
+act(strategy_aim_to_wumpus, turnright) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [X, WY]),
+    Y > WY,
+    agent_orientation(180),
+    is_short_goal(aim_to_wumpus_in_the_same_X), !.
+
+% Turn right if at the same X, at a bigger Y and looking north
+act(strategy_aim_to_wumpus, turnright) :- 
+    agent_goal(find_out),
+    agent_courage,
+    agent_arrows(1),
+    wumpus_healthy,
+    agent_location([X, Y]),
+    is_wumpus(yes, [X, WY]),
+    Y > WY,
+    agent_orientation(90),
+    is_short_goal(aim_to_wumpus_in_the_same_X), !.
+
+
+% Strategy to go to risky positions to find the gold
 % I'm not tired but nowhere is good room and my goal is always find gold
 % So I'm testing risky and deadly room...
-	
-% First the risky room	
-	
-act(strategy_find_out,forward) :-	% I don't know any more good room 
-	agent_goal(find_out),	 	% Now I'm not interested anymore by
-	agent_courage, 	
-	location_ahead(L),		% looking for a risky room better 
-	risky(L),			% than a deadly room, .
-	no(is_wall(L)),			% Can't be a wall !!!
-	is_short_goal(find_out_forward__risky),
-	!.
-	
-act(strategy_find_out,turnleft) :-
-	agent_courage,		
-	agent_goal(find_out),		% so I test by following priority :
-	agent_orientation(O),		% risky(forward), risky(turnleft),
-	Planned_O is (O+90) mod 360,	% risky(turnright), deadly(forward)
-	agent_location(L),
-	location_toward(L,Planned_O,Planned_L),
-	risky(Planned_L),
-	no(is_wall(Planned_L)),		% Can't be a wall !!!
-	is_short_goal(find_out_turnleft__risky),
-	!.
-	
-act(strategy_find_out,turnright) :-
-	agent_courage,
-	agent_goal(find_out),
-	agent_orientation(O),
-	Planned_O is abs(O-90) mod 360,	
-	agent_location(L),
-	location_toward(L,Planned_O,Planned_L),
-	risky(Planned_L),
-	no(is_wall(Planned_L)),		% Can't be a wall !!!
-	is_short_goal(find_out_turnright__risky).
-	
-% Second the deadly room		
+    
+% First the risky room  
+    
+act(strategy_find_out_risky,forward) :-   % I don't know any more good room 
+    agent_goal(find_out),       % Now I'm not interested anymore by
+    agent_courage,  
+    location_ahead(L),      % looking for a risky room better 
+    risky(L),           % than a deadly room, .
+    no(is_wall(L)),         % Can't be a wall !!!
+    is_short_goal(find_out_forward__risky),
+    !.
+    
+act(strategy_find_out_risky,turnleft) :-
+    agent_courage,      
+    agent_goal(find_out),       % so I test by following priority :
+    agent_orientation(O),       % risky(forward), risky(turnleft),
+    Planned_O is (O+90) mod 360,    % risky(turnright), deadly(forward)
+    agent_location(L),
+    location_toward(L,Planned_O,Planned_L),
+    risky(Planned_L),
+    no(is_wall(Planned_L)),     % Can't be a wall !!!
+    is_short_goal(find_out_turnleft__risky),
+    !.
+    
+act(strategy_find_out_risky,turnright) :-
+    agent_courage,
+    agent_goal(find_out),
+    agent_orientation(O),
+    Planned_O is abs(O-90) mod 360, 
+    agent_location(L),
+    location_toward(L,Planned_O,Planned_L),
+    risky(Planned_L),
+    no(is_wall(Planned_L)),     % Can't be a wall !!!
+    is_short_goal(find_out_turnright__risky).
+    
+% Second the deadly room        
 
-act(strategy_find_out,forward) :-
-	agent_courage,			
-	agent_goal(find_out),		
-	location_ahead(L),		
-	deadly(L),
-	no(is_wall(L)),			% Can't be a wall !!!
-	is_short_goal(find_out_forward__deadly),
-	!.	
-	
-act(strategy_find_out,turn_left) :-
-	agent_courage,			
-	agent_goal(find_out),
-	agent_orientation(O),
-	Planned_O is (O+90) mod 360,
-	agent_location(L),
-	location_toward(L,Planned_O,Planned_L),
-	deadly(Planned_L),
-	no(is_wall(Planned_L)),		% Can't be a wall !!!	
-	is_short_goal(find_out_turnleft__deadly),
-	!.
-	
-act(strategy_find_out,turn_right) :-
-	agent_courage,		
-	agent_goal(find_out),
-	agent_orientation(O),
-	Planned_O is abs(O-90) mod 360,
-	agent_location(L),
-	location_toward(L,Planned_O,Planned_L),
-	no(is_wall(Planned_L)),		% Can't be a wall !!!	
-	deadly(Planned_L),
-	is_short_goal(find_out_turnright__deadly),!.	
-	
+act(strategy_find_out_risky,forward) :-
+    agent_courage,          
+    agent_goal(find_out),       
+    location_ahead(L),      
+    deadly(L),
+    no(is_wall(L)),         % Can't be a wall !!!
+    is_short_goal(find_out_forward__deadly),
+    !.  
+    
+act(strategy_find_out_risky,turnleft) :-
+    agent_courage,          
+    agent_goal(find_out),
+    agent_orientation(O),
+    Planned_O is (O+90) mod 360,
+    agent_location(L),
+    location_toward(L,Planned_O,Planned_L),
+    deadly(Planned_L),
+    no(is_wall(Planned_L)),     % Can't be a wall !!!   
+    is_short_goal(find_out_turnleft__deadly),
+    !.
+    
+act(strategy_find_out_risky,turnright) :-
+    agent_courage,      
+    agent_goal(find_out),
+    agent_orientation(O),
+    Planned_O is abs(O-90) mod 360,
+    agent_location(L),
+    location_toward(L,Planned_O,Planned_L),
+    no(is_wall(Planned_L)),     % Can't be a wall !!!   
+    deadly(Planned_L),
+    is_short_goal(find_out_turnright__deadly),!.    
+
+
 % Strategy to go out : I follow the wall helping the chance...
 % I perfom this strategy in order to go out because
 % I found gold
